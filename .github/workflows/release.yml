@@ -2,8 +2,9 @@ name: release
 
 on:
   push:
-    # tags:
-    #   - "v*"
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -20,3 +21,11 @@ jobs:
         run: npx tsc
       - name: Confirm
         run: ls dist/* ; cat dist/*
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          draft: false
+          generate_release_notes: true
+          files: dist/userscript-nr-date-time-range-picker.js

@@ -1,10 +1,10 @@
 
 // ==UserScript==
 // @name         NR Date Time Range Picker
-// @namespace    https://netmark.jp/
+// @namespace    https://github.com/netmarkjp/userscript-nr-date-time-range-picker
 // @version      0.1
-// @description  try to take over the world!
-// @author       You
+// @description  Add useful(=copy/paste enabled) DateTimeRange Input form to New Relic One page.
+// @author       BABA Toshiaki <toshiaki@netmark.jp>
 // @match        https://one.newrelic.com/*
 // @grant        none
 // @run-at       document-idle
