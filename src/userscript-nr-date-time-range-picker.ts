@@ -28,6 +28,9 @@ div.userscript-nr-date-time-range-picker div#myPopup {
 div.userscript-nr-date-time-range-picker div.form-group {
     text-align: right;
 }
+div.userscript-nr-date-time-range-picker #myPopupTimeRange {
+    width: 17em;
+}
 </style>
 <div class="userscript-nr-date-time-range-picker">
     <button id="userscript-nr-date-time-range-picker-btn">【🗓️】</button>
@@ -35,16 +38,16 @@ div.userscript-nr-date-time-range-picker div.form-group {
         <header>
             <div id="userscript-nr-date-time-range-picker-btn-close">ⓧ</div>
         </header>
-        <div id="myPopupBody>
-            <form>
+        <div id="myPopupBody">
+            <div id="myPopupForm">
                 <div class="form-group">
-                    <label for="myPopupTimeRange">Time Range in Localtime</label>
+                    <label for="myPopupTimeRange">Time Range in Localtime</label><br />
                     <input type="text" id="myPopupTimeRange" name="myPopupTimeRange" placeholder="YYYY/mm/dd HH:MM - YYYY/mm/dd HH:MM" value="" />
                 </div>
                 <div class="form-group">
                     <button id="myPopupSubmit">GO</button>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
@@ -105,6 +108,33 @@ function formatUnixTime(unixTimeMs: number | string): string {
 	return `${year}/${month}/${day} ${hour}:${minute}`;
 }
 
+function transformLocalDateTimeToUnixtime(localDateTime: string): string {
+	const date = new Date(localDateTime);
+	return date.getTime().toString(10);
+}
+
+function rewriteUrl(url: URL, begin: string, end: string): string {
+	// Rewrite begin, end in query string
+	url.searchParams.set('begin', begin);
+	url.searchParams.set('end', end);
+
+	// Remove duration query string
+	url.searchParams.delete('duration');
+
+	return url.toString();
+}
+
+function addEventSubmit(timeRangeInput: HTMLInputElement) {
+	const timeRange = timeRangeInput.value;
+	const [begin, end] = timeRange.split('-')
+		.map(v => v.trim())
+		.map(v => transformLocalDateTimeToUnixtime(v));
+	if (begin && end) {
+		const newUrl = rewriteUrl(new URL(window.location.href), begin, end);
+		window.location.href = newUrl;
+	}
+}
+
 async function main() {
 	const targetDiv = await findElement('.nr-css-DateTimeRangePicker');
 	if (targetDiv) {
@@ -116,11 +146,15 @@ async function main() {
 			const btn = await findElement('#userscript-nr-date-time-range-picker-btn');
 			const popup = await findElement('#myPopup');
 			const popupCloseBtn = await findElement('#userscript-nr-date-time-range-picker-btn-close');
+			const popupForm = await findElement('#myPopupForm');
+			const popupSubmitBtn = await findElement('#myPopupSubmit');
+			const popupTimeRangeInput = await findElement('#myPopupTimeRange') as HTMLInputElement;
 
 			if (btn && popup && popupCloseBtn) {
 				btn.addEventListener('click', () => {
 					if (popup.style && popup.style.display !== 'block') {
 						popup.style.display = 'block';
+						popupTimeRangeInput.focus();
 					} else if (popup.style && popup.style.display === 'block') {
 						popup.style.display = 'none';
 					}
@@ -137,11 +171,24 @@ async function main() {
 				});
 			}
 
-			/* Action */
 			const {begin, end} = await getTimeRangeFromQueryString();
-			const timeRangeInput = await findElement('#myPopupTimeRange');
-			if (timeRangeInput && timeRangeInput instanceof HTMLInputElement && begin && end) {
-				timeRangeInput.value = `${formatUnixTime(begin)} - ${formatUnixTime(end)}`;
+			if (popupTimeRangeInput && begin && end) {
+				popupTimeRangeInput.value = `${formatUnixTime(begin)} - ${formatUnixTime(end)}`;
+			}
+
+			/* Action */
+			if (popupForm) {
+				popupForm.addEventListener('keydown', event => {
+					if (event.key === 'Enter') {
+						addEventSubmit(popupTimeRangeInput);
+					}
+				});
+			}
+
+			if (popupSubmitBtn) {
+				popupSubmitBtn.addEventListener('click', () => {
+					addEventSubmit(popupTimeRangeInput);
+				});
 			}
 		}
 	}
