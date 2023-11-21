@@ -38,13 +38,8 @@ div.userscript-nr-date-time-range-picker div.form-group {
         <div id="myPopupBody>
             <form>
                 <div class="form-group">
-                    <label for="beginInput">begin</label>
-                    <input type="text" id="myPopupBeginInput" name="begin" placeholder="YYYY/MM/DD HH:MM(localtime)" value="" />
-                </div>
-
-                <div class="form-group">
-                    <label for="endInput">end</label>
-                    <input type="text" id="myPopupEndInput" name="end" placeholder="YYYY/MM/DD HH:MM(localtime)" value="" />
+                    <label for="myPopupTimeRange">Time Range in Localtime</label>
+                    <input type="text" id="myPopupTimeRange" name="myPopupTimeRange" placeholder="YYYY/mm/dd HH:MM - YYYY/mm/dd HH:MM" value="" />
                 </div>
                 <div class="form-group">
                     <button id="myPopupSubmit">GO</button>
@@ -144,14 +139,9 @@ async function main() {
 
 			/* Action */
 			const {begin, end} = await getTimeRangeFromQueryString();
-			const beginInput = await findElement('#myPopupBeginInput');
-			if (beginInput && beginInput instanceof HTMLInputElement && begin) {
-				beginInput.value = formatUnixTime(begin) || '';
-			}
-
-			const endInput = await findElement('#myPopupEndInput');
-			if (endInput && endInput instanceof HTMLInputElement && end) {
-				endInput.value = formatUnixTime(end) || '';
+			const timeRangeInput = await findElement('#myPopupTimeRange');
+			if (timeRangeInput && timeRangeInput instanceof HTMLInputElement && begin && end) {
+				timeRangeInput.value = `${formatUnixTime(begin)} - ${formatUnixTime(end)}`;
 			}
 		}
 	}
