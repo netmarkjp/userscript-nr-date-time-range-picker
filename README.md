@@ -8,6 +8,16 @@ Easy to use, can **COPY and PASTE** the date and time range to other pages.
 
 ![showing](README.assets/show.png)
 
+# This script does what?
+
+1. Pick `begin` and `end` from URL query parameters.
+    - If `begin` and `end` are not found, and if `duration` found, calculate `begin` and `end` from `duration`.
+    - When also `duration` is not found, out of scope.
+2. Push `GO` or hit `ENTER` key to apply the date and time range to the page.
+    1. Set `begin` and `end` query string to the URL.
+    2. Remove `duration` and `state` query string from the URL.
+    3. `window.location.href = newUrl;`
+
 # Install
 
 1. Install Tampermonkey extension for your browser if not yet installed.
