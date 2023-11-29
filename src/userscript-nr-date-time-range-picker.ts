@@ -67,7 +67,7 @@ async function findElement(selector: string): Promise<HTMLElement | undefined> {
 	return undefined;
 }
 
-async function getTimeRangeFromQueryString(): Promise<{begin: string; end: string}> {
+function getTimeRangeFromQueryString(): {begin: string; end: string} {
 	const url = new URL(window.location.href);
 	const begin = url.searchParams.get('begin'); // In GMT unixtime (ms)
 	const end = url.searchParams.get('end'); // In GMT unixtime (ms)
@@ -136,7 +136,12 @@ function addEventSubmit(timeRangeInput: HTMLInputElement) {
 }
 
 async function main() {
-	const targetDiv = await findElement('.nr-css-DateTimeRangePicker');
+	let targetDiv = await findElement('.nr-css-DateTimeRangePicker');
+	if (targetDiv === undefined) {
+		// APM page
+		targetDiv = await findElement('.nr-css-DateTimeRangePicker-trigger');
+	}
+
 	if (targetDiv) {
 		const newDiv = document.createElement('div');
 		newDiv.innerHTML = template;
@@ -153,6 +158,11 @@ async function main() {
 			if (btn && popup && popupCloseBtn) {
 				btn.addEventListener('click', () => {
 					if (popup.style && popup.style.display !== 'block') {
+						const {begin, end} = getTimeRangeFromQueryString();
+						if (popupTimeRangeInput && begin && end) {
+							popupTimeRangeInput.value = `${formatUnixTime(begin)} - ${formatUnixTime(end)}`;
+						}
+
 						popup.style.display = 'block';
 						popupTimeRangeInput.focus();
 					} else if (popup.style && popup.style.display === 'block') {
@@ -169,11 +179,6 @@ async function main() {
 						popup.style.display = 'none';
 					}
 				});
-			}
-
-			const {begin, end} = await getTimeRangeFromQueryString();
-			if (popupTimeRangeInput && begin && end) {
-				popupTimeRangeInput.value = `${formatUnixTime(begin)} - ${formatUnixTime(end)}`;
 			}
 
 			/* Action */
