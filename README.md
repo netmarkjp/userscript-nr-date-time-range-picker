@@ -15,7 +15,7 @@ Easy to use, can **COPY and PASTE** the date and time range to other pages.
     - When also `duration` is not found, out of scope.
 2. Push `GO` or hit `ENTER` key to apply the date and time range to the page.
     1. Set `begin` and `end` query string to the URL.
-    2. Remove `duration` and `state` query string from the URL.
+    2. Remove `duration` query string from the URL.
     3. `window.location.href = newUrl;`
 
 # Install

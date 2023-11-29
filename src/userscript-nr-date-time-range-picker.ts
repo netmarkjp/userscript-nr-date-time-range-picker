@@ -2,7 +2,7 @@
 // ==UserScript==
 // @name         NR Date Time Range Picker
 // @namespace    https://github.com/netmarkjp/userscript-nr-date-time-range-picker
-// @version      0.2.0
+// @version      0.3.0
 // @description  Add useful(=copy/paste enabled) DateTimeRange Input form to New Relic One page.
 // @author       BABA Toshiaki <toshiaki@netmark.jp>
 // @match        https://one.newrelic.com/*
@@ -120,9 +120,6 @@ function rewriteUrl(url: URL, begin: string, end: string): string {
 
 	// Remove duration query string
 	url.searchParams.delete('duration');
-
-	// Remove state query string
-	url.searchParams.delete('state');
 
 	return url.toString();
 }
