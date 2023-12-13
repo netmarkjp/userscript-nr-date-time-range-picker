@@ -121,6 +121,12 @@ function rewriteUrl(url: URL, begin: string, end: string): string {
 	// Remove duration query string
 	url.searchParams.delete('duration');
 
+	const filters = url.searchParams.get('filters');
+	const state = url.searchParams.get('state');
+	if (filters && state) {
+		url.searchParams.delete('state');
+	}
+
 	return url.toString();
 }
 
