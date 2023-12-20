@@ -127,6 +127,12 @@ function rewriteUrl(url: URL, begin: string, end: string): string {
 		url.searchParams.delete('state');
 	}
 
+	if (url.pathname === '/logger') {
+		// filter condisions are dropped when state is dropped.
+		// that is unhappy/not-willed behavior, but no way to keep filter condisions.
+		url.searchParams.delete('state');
+	}
+
 	return url.toString();
 }
 

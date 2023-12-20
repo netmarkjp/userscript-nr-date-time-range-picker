@@ -18,6 +18,11 @@ Easy to use, can **COPY and PASTE** the date and time range to other pages.
     2. Remove `duration` query string from the URL.
     3. `window.location.href = newUrl;`
 
+## Restrictions
+
+- Logs(`/logger`) is not supported.
+    - Search condition will lost when you change DateTimeRange and Go. SO, copy search condition and paste after moved.
+
 # Install
 
 1. Install Tampermonkey extension for your browser if not yet installed.
